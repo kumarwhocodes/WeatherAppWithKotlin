@@ -20,7 +20,7 @@ private val DarkColorScheme = darkColorScheme(
     background = darkBG,
     primary = darkPrimary,
     secondary = darkSecondary,
-    tertiary = darkPrimary
+    tertiary = darkPrimary,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -64,6 +64,8 @@ fun WeatherTheme(
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
+
+
 
     MaterialTheme(
         colorScheme = colorScheme,

@@ -70,9 +70,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.kumar.weather.ui.theme.WeatherTheme
+import com.kumar.weather.ui.theme.abelFontFamily
 import com.kumar.weather.ui.theme.lightBG
 import com.kumar.weather.ui.theme.lightPrimary
-import com.kumar.weather.ui.theme.recursiveFontFamily
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -118,293 +118,301 @@ fun Weather(viewModel: WeatherViewModel) {
     // Format the date as needed (e.g., "Monday, March 9, 2024")
     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("EEEE"))
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .padding(bottom = 180.dp),
-        verticalArrangement = Arrangement.SpaceEvenly,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-
-        //Search Box
-        Box(
-            modifier = Modifier
-                .padding(15.dp)
-                .border(
-                    width = 2.dp,
-                    color = Color.Black,
-                    shape = RoundedCornerShape(50.dp)
-
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 5.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val keyboardController = LocalSoftwareKeyboardController.current
-                val inputCity by viewModel.inputCity.collectAsState("")
-
-                OutlinedTextField(value = inputCity,
-                    onValueChange = { viewModel.onInputCityChanged(it) },
-                    label = { Text("Enter city:") },
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedTextColor = Color.Black, // Set text color to white
-                        cursorColor = Color.Black, // Set cursor color to white
-                        focusedLabelColor = Color.Transparent, // Set focused label color to white
-                        unfocusedLabelColor = Color.Transparent.copy(alpha = 0.7f),
-                        focusedBorderColor = Color.Transparent,
-                        unfocusedBorderColor = Color.Transparent
-                    ),// Set unfocused label color to white with alpha
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = {
-                        viewModel.onSearchClicked()
-                        keyboardController?.hide()
-                    }),
-                    modifier = Modifier
-                        .background(color = Color.Transparent)
-                        .padding(end = 2.dp)
-                        .fillMaxWidth(1f),
-                    leadingIcon = {
-                        FloatingActionButton(
-                            onClick = { /*TODO*/ },
-                            containerColor = Color.Transparent,
-                            contentColor = Color.Black,
-                            elevation = FloatingActionButtonDefaults.elevation(0.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.LocationOn,
-                                contentDescription = "Search by location",
-                                modifier = Modifier
-                                    .background(color = Color.Transparent)
-                                    .size(40.dp)
-                                    .padding(start = 10.dp)
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        FloatingActionButton(
-                            onClick = { viewModel.onSearchClicked() },
-                            containerColor = Color.Transparent,
-                            contentColor = Color.Black,
-                            elevation = FloatingActionButtonDefaults.elevation(0.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Search,
-                                contentDescription = "search_city_fab",
-                                modifier = Modifier
-                                    .background(color = Color.Transparent)
-                                    .size(40.dp)
-                                    .padding(end = 10.dp)
-                            )
-                        }
-                    })
-            }
-
-        }
-
-
-        //City name
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp, top = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            val showCity by viewModel.showCity.collectAsState("")
-            Text(
-                text = showCity,
-                textAlign = TextAlign.Center,
-                fontSize = 32.sp,
-                color = Color.Black,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace
-            )
-
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            val updateTime by viewModel.updateTime.collectAsState("")
-            Text(
-                text = formattedDate,
-                fontSize = 20.sp,
-                color = Color.Black,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace
-            )
-            Spacer(modifier = Modifier.width(3.dp))
-            Text(
-                text = updateTime,
-                fontSize = 20.sp,
-                color = Color.Black,
-                fontStyle = FontStyle.Normal,
-                fontFamily = FontFamily.Monospace
-            )
-
-        }
-
-        //Weather Condition Image
-        val iconUrl by viewModel.iconUrl.collectAsState("")
-        Row {
-            if (iconUrl.isNotEmpty()) {
-                val painter = rememberImagePainter(iconUrl)
-                Image(
-                    painter = painter,
-                    contentDescription = "Weather icon",
-                    modifier = Modifier.size(150.dp)
-                )
-            }
-        }
-
-        //Temperature
+    WeatherTheme {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 0.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .padding(bottom = 180.dp),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            val temperature by viewModel.temperature.collectAsState()
-            Row {
-                Text(
-                    text = "$temperature°C",
-                    textAlign = TextAlign.Center,
-                    fontSize = 40.sp,
-                    fontFamily = FontFamily.Serif,
-                    color = Color.Black
-                )
+
+            //Search Box
+            Box(
+                modifier = Modifier
+                    .padding(15.dp)
+                    .border(
+                        width = 2.dp,
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = RoundedCornerShape(50.dp)
+
+                    )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 5.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val keyboardController = LocalSoftwareKeyboardController.current
+                    val inputCity by viewModel.inputCity.collectAsState("")
+
+                    OutlinedTextField(value = inputCity,
+                        onValueChange = { viewModel.onInputCityChanged(it) },
+                        label = {
+                            Text(
+                                "Enter city:",
+                                fontFamily = abelFontFamily
+                            )
+                        },
+                        singleLine = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedTextColor = Color.Black, // Set text color to white
+                            cursorColor = Color.Black, // Set cursor color to white
+                            focusedLabelColor = Color.Transparent, // Set focused label color to white
+                            unfocusedLabelColor = Color.Transparent.copy(alpha = 0.7f),
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent
+                        ),// Set unfocused label color to white with alpha
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = {
+                            viewModel.onSearchClicked()
+                            keyboardController?.hide()
+                        }),
+                        modifier = Modifier
+                            .background(color = Color.Transparent)
+                            .padding(end = 2.dp)
+                            .fillMaxWidth(1f),
+                        leadingIcon = {
+                            FloatingActionButton(
+                                onClick = { /*TODO*/ },
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.LocationOn,
+                                    contentDescription = "Search by location",
+                                    modifier = Modifier
+                                        .background(color = Color.Transparent)
+                                        .size(40.dp)
+                                        .padding(start = 10.dp)
+                                )
+                            }
+                        },
+                        trailingIcon = {
+                            FloatingActionButton(
+                                onClick = { viewModel.onSearchClicked() },
+                                containerColor = Color.Transparent,
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Search,
+                                    contentDescription = "search_city_fab",
+                                    modifier = Modifier
+                                        .background(color = Color.Transparent)
+                                        .size(40.dp)
+                                        .padding(end = 10.dp)
+                                )
+                            }
+                        })
+                }
 
             }
 
-            //Weather condition
+
+            //City name
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp),
+                    .padding(start = 10.dp, end = 10.dp, top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                val weatherCond by viewModel.weatherCond.collectAsState("")
+                val showCity by viewModel.showCity.collectAsState("")
                 Text(
-                    text = weatherCond.toString(),
+                    text = showCity,
                     textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    color = Color.Black,
+                    fontSize = 32.sp,
+                    color = MaterialTheme.colorScheme.primary,
                     fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = abelFontFamily
                 )
 
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                val updateTime by viewModel.updateTime.collectAsState("")
+                Text(
+                    text = formattedDate,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontStyle = FontStyle.Normal,
+                    fontFamily = abelFontFamily
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = updateTime,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontStyle = FontStyle.Normal,
+                    fontFamily = abelFontFamily
+                )
+
+            }
+
+            //Weather Condition Image
+            val iconUrl by viewModel.iconUrl.collectAsState("")
+            Row {
+                if (iconUrl.isNotEmpty()) {
+                    val painter = rememberImagePainter(iconUrl)
+                    Image(
+                        painter = painter,
+                        contentDescription = "Weather icon",
+                        modifier = Modifier.size(150.dp)
+                    )
+                }
+            }
+
+            //Temperature
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 0.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                val temperature by viewModel.temperature.collectAsState()
+                Row {
+                    Text(
+                        text = "$temperature°C",
+                        textAlign = TextAlign.Center,
+                        fontSize = 40.sp,
+                        fontFamily = abelFontFamily,
+                        color = Color.Black
+                    )
+
+                }
+
+                //Weather condition
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    val weatherCond by viewModel.weatherCond.collectAsState("")
+                    Text(
+                        text = weatherCond.toString(),
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+
+                }
+            }
+
+            //others
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(start = 30.dp, end = 25.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.sunrise),
+                        contentDescription = "sunrise",
+                        modifier = Modifier.size(50.dp),
+                        colorFilter = ColorFilter.tint(lightPrimary)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.wind_icon),
+                        contentDescription = "sunrise",
+                        modifier = Modifier.size(50.dp),
+                        colorFilter = ColorFilter.tint(lightPrimary)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.sunset),
+                        contentDescription = "sunrise",
+                        modifier = Modifier.size(50.dp),
+                        colorFilter = ColorFilter.tint(lightPrimary)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(start = 30.dp, end = 30.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "SUNRISE",
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+                    Text(
+                        text = "WIND",
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+                    Text(
+                        text = "SUNSET",
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(start = 35.dp, end = 30.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    val sunriseTime by viewModel.sunriseTime.collectAsState("")
+                    Text(
+                        text = sunriseTime,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+                    val windSpeed by viewModel.windSpeed.collectAsState()
+                    Text(
+                        text = "$windSpeed" + "m/s",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+                    val sunsetTime by viewModel.sunsetTime.collectAsState("")
+                    Text(
+                        text = sunsetTime,
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+
+                }
+            }
+
+
         }
-
-        //others
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .padding(start = 30.dp, end = 25.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.sunrise),
-                    contentDescription = "sunrise",
-                    modifier = Modifier.size(50.dp),
-                    colorFilter = ColorFilter.tint(lightPrimary)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.wind_icon),
-                    contentDescription = "sunrise",
-                    modifier = Modifier.size(50.dp),
-                    colorFilter = ColorFilter.tint(lightPrimary)
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.sunset),
-                    contentDescription = "sunrise",
-                    modifier = Modifier.size(50.dp),
-                    colorFilter = ColorFilter.tint(lightPrimary)
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .padding(start = 25.dp, end = 25.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "SUNRISE",
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "WIND",
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
-                Text(
-                    text = "SUNSET",
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
-
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(1f)
-                    .padding(start = 17.dp, end = 15.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                val sunriseTime by viewModel.sunriseTime.collectAsState("")
-                Text(
-                    text = sunriseTime,
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
-               val windSpeed by viewModel.windSpeed.collectAsState()
-                Text(
-                    text = "$windSpeed"+"m/s",
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
-                val sunsetTime by viewModel.sunsetTime.collectAsState("")
-                Text(
-                    text = sunsetTime,
-                    textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = FontFamily.Monospace
-                )
-
-            }
-        }
-
-
     }
 }
 

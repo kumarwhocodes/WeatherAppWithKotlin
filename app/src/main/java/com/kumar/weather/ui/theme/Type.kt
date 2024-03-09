@@ -40,10 +40,7 @@ val Typography = Typography(
 
 )
 
-val recursiveFontFamily = FontFamily(
-    Font(R.font.bold, FontWeight.Bold),
-    Font(R.font.light, FontWeight.Light),
-    Font(R.font.medium, FontWeight.Medium),
-    Font(R.font.regular, FontWeight.Normal),
-    Font(R.font.semibold, FontWeight.SemiBold),
+val abelFontFamily = FontFamily(
+    Font(R.font.abel_regular)
+
 )
