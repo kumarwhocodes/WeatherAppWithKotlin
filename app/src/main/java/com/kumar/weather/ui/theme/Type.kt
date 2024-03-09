@@ -1,12 +1,15 @@
 package com.kumar.weather.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.R
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.fontResource
+import androidx.compose.ui.text.font.FontWeight
+import com.kumar.weather.R
+
+
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -33,4 +36,14 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
     */
+
+
+)
+
+val recursiveFontFamily = FontFamily(
+    Font(R.font.bold, FontWeight.Bold),
+    Font(R.font.light, FontWeight.Light),
+    Font(R.font.medium, FontWeight.Medium),
+    Font(R.font.regular, FontWeight.Normal),
+    Font(R.font.semibold, FontWeight.SemiBold),
 )
