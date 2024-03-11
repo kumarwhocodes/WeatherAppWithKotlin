@@ -20,7 +20,7 @@ private val DarkColorScheme = darkColorScheme(
     background = darkBG,
     primary = darkPrimary,
     secondary = darkSecondary,
-    tertiary = darkPrimary,
+    tertiary = darkPrimary
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -44,7 +44,7 @@ private val LightColorScheme = lightColorScheme(
 fun WeatherTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

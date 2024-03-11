@@ -3,6 +3,7 @@ package com.kumar.weather
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -57,6 +58,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -85,7 +87,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             WeatherTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -103,6 +104,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Weather(viewModel: WeatherViewModel) {
+    val context = LocalContext.current
 
     var inputCity by remember { mutableStateOf("") }
     var showCity by remember { mutableStateOf("") }
@@ -111,19 +113,16 @@ fun Weather(viewModel: WeatherViewModel) {
     val maxtemp by remember { mutableStateOf("") }
     val weatherCond by viewModel.weatherCond.collectAsState(WeatherCondition.CLEAR)
 
-
-    // Get the current date
     val currentDate = LocalDate.now()
 
-    // Format the date as needed (e.g., "Monday, March 9, 2024")
     val formattedDate = currentDate.format(DateTimeFormatter.ofPattern("EEEE"))
 
     WeatherTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 180.dp),
-            verticalArrangement = Arrangement.SpaceEvenly,
+                .padding(bottom = 40.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -154,18 +153,19 @@ fun Weather(viewModel: WeatherViewModel) {
                         label = {
                             Text(
                                 "Enter city:",
-                                fontFamily = abelFontFamily
+                                fontFamily = abelFontFamily,
+                                color = MaterialTheme.colorScheme.secondary
                             )
                         },
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedTextColor = Color.Black, // Set text color to white
-                            cursorColor = Color.Black, // Set cursor color to white
-                            focusedLabelColor = Color.Transparent, // Set focused label color to white
-                            unfocusedLabelColor = Color.Transparent.copy(alpha = 0.7f),
-                            focusedBorderColor = Color.Transparent,
+                            focusedTextColor = MaterialTheme.colorScheme.secondary,
+                            cursorColor = MaterialTheme.colorScheme.secondary,
+                            focusedLabelColor = MaterialTheme.colorScheme.background,
+                            unfocusedLabelColor = Color.Transparent,
+                            focusedBorderColor = MaterialTheme.colorScheme.background,
                             unfocusedBorderColor = Color.Transparent
-                        ),// Set unfocused label color to white with alpha
+                        ),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(onSearch = {
                             viewModel.onSearchClicked()
@@ -194,7 +194,14 @@ fun Weather(viewModel: WeatherViewModel) {
                         },
                         trailingIcon = {
                             FloatingActionButton(
-                                onClick = { viewModel.onSearchClicked() },
+                                onClick = {
+                                    try {
+                                        viewModel.onSearchClicked()
+                                    } catch (e: Exception) {
+                                        Toast.makeText(context, "Invalid City", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                },
                                 containerColor = Color.Transparent,
                                 contentColor = MaterialTheme.colorScheme.primary,
                                 elevation = FloatingActionButtonDefaults.elevation(0.dp)
@@ -214,48 +221,52 @@ fun Weather(viewModel: WeatherViewModel) {
             }
 
 
-            //City name
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp, top = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val showCity by viewModel.showCity.collectAsState("")
-                Text(
-                    text = showCity,
-                    textAlign = TextAlign.Center,
-                    fontSize = 32.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = abelFontFamily
-                )
+            Column {
+                //City name
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp, top = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    val showCity by viewModel.showCity.collectAsState("")
+                    Text(
+                        text = showCity,
+                        textAlign = TextAlign.Center,
+                        fontSize = 34.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.ExtraBold
+                    )
 
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                val updateTime by viewModel.updateTime.collectAsState("")
-                Text(
-                    text = formattedDate,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = abelFontFamily
-                )
-                Spacer(modifier = Modifier.width(3.dp))
-                Text(
-                    text = updateTime,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontStyle = FontStyle.Normal,
-                    fontFamily = abelFontFamily
-                )
+                }
+                //day and time
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    val updateTime by viewModel.updateTime.collectAsState("")
+                    Text(
+                        text = formattedDate,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = updateTime,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily
+                    )
 
+                }
             }
 
             //Weather Condition Image
@@ -266,7 +277,8 @@ fun Weather(viewModel: WeatherViewModel) {
                     Image(
                         painter = painter,
                         contentDescription = "Weather icon",
-                        modifier = Modifier.size(150.dp)
+                        modifier = Modifier.size(150.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                     )
                 }
             }
@@ -287,7 +299,8 @@ fun Weather(viewModel: WeatherViewModel) {
                         textAlign = TextAlign.Center,
                         fontSize = 40.sp,
                         fontFamily = abelFontFamily,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.ExtraBold
                     )
 
                 }
@@ -305,13 +318,15 @@ fun Weather(viewModel: WeatherViewModel) {
                         text = weatherCond.toString(),
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontStyle = FontStyle.Normal,
                         fontFamily = abelFontFamily
                     )
 
                 }
             }
+
+            Spacer(modifier = Modifier.height(40.dp))
 
             //others
             Column {
@@ -325,19 +340,19 @@ fun Weather(viewModel: WeatherViewModel) {
                         painter = painterResource(id = R.drawable.sunrise),
                         contentDescription = "sunrise",
                         modifier = Modifier.size(50.dp),
-                        colorFilter = ColorFilter.tint(lightPrimary)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                     )
                     Image(
                         painter = painterResource(id = R.drawable.wind_icon),
                         contentDescription = "sunrise",
                         modifier = Modifier.size(50.dp),
-                        colorFilter = ColorFilter.tint(lightPrimary)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                     )
                     Image(
                         painter = painterResource(id = R.drawable.sunset),
                         contentDescription = "sunrise",
                         modifier = Modifier.size(50.dp),
-                        colorFilter = ColorFilter.tint(lightPrimary)
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
                     )
                 }
 
@@ -351,25 +366,28 @@ fun Weather(viewModel: WeatherViewModel) {
                         text = "SUNRISE",
                         textAlign = TextAlign.Center,
                         fontSize = 15.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontStyle = FontStyle.Normal,
-                        fontFamily = abelFontFamily
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = "WIND",
                         textAlign = TextAlign.Center,
                         fontSize = 15.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontStyle = FontStyle.Normal,
-                        fontFamily = abelFontFamily
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = "SUNSET",
                         textAlign = TextAlign.Center,
                         fontSize = 15.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontStyle = FontStyle.Normal,
-                        fontFamily = abelFontFamily
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.SemiBold
                     )
 
                 }
@@ -385,32 +403,140 @@ fun Weather(viewModel: WeatherViewModel) {
                         text = sunriseTime,
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontStyle = FontStyle.Normal,
-                        fontFamily = abelFontFamily
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.Bold
                     )
                     val windSpeed by viewModel.windSpeed.collectAsState()
                     Text(
                         text = "$windSpeed" + "m/s",
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontStyle = FontStyle.Normal,
-                        fontFamily = abelFontFamily
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.Bold
                     )
                     val sunsetTime by viewModel.sunsetTime.collectAsState("")
                     Text(
                         text = sunsetTime,
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontStyle = FontStyle.Normal,
-                        fontFamily = abelFontFamily
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.Bold
                     )
 
                 }
             }
 
+            Spacer(modifier = Modifier.height(0.dp))
+
+            //otherssssss
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(start = 25.dp, end = 30.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.humidity_icon),
+                        contentDescription = "sunrise",
+                        modifier = Modifier.size(50.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.temp_hot),
+                        contentDescription = "sunrise",
+                        modifier = Modifier.size(50.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.visibility),
+                        contentDescription = "sunrise",
+                        modifier = Modifier.size(50.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(start = 25.dp, end = 25.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "HUMIDITY",
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "FEELS LIKE",
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "VISIBILITY",
+                        textAlign = TextAlign.Center,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(1f)
+                        .padding(start = 35.dp, end = 30.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    val humidity by viewModel.humidity.collectAsState("")
+                    Text(
+                        text = "$humidity" + "%",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                    val feelslike by viewModel.feels.collectAsState()
+                    Text(
+                        text = "  " + "$feelslike" + "°C",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                    val visibility by viewModel.visibility.collectAsState("")
+                    Text(
+                        text = "$visibility" + "m",
+                        textAlign = TextAlign.Center,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontStyle = FontStyle.Normal,
+                        fontFamily = abelFontFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                }
+            }
 
         }
     }
